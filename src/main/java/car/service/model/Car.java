@@ -1,15 +1,15 @@
 package car.service.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
+@Table(name = "cars")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,5 +32,8 @@ public class Car {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "engine_type")
     private EngineType engineType;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @ToString.Exclude
+    private Set<Mechanic> mechanicSet;
 
 }
