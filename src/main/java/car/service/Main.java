@@ -10,15 +10,16 @@ public class Main {
     public static void main(String[] args) {
         CarDao carDao = new CarDao();
         MechanicDao mechanicDao = new MechanicDao();
+        OwnerDao ownerDao = new OwnerDao();
         Scanner scanner = new Scanner(System.in);
         String command;
 
         do {
             System.out.println("Choose order: [addCar/addMechanic/updateCar/updateMechanic/carList" +
-                    "/mechanicList/deleteCar/deleteMechanic/connectMechanic/selectCar/quit]");
+                    "/mechanicList/deleteCar/deleteMechanic/connectMechanic/selectCar/selectOwner/quit]");
             command = scanner.nextLine();
             if (command.equalsIgnoreCase("addCar")) {
-                carDao.addCar(scanner);
+                carDao.addNewCar(scanner);
             } else if (command.equalsIgnoreCase("addMechanic")) {
                 mechanicDao.addMechanic(scanner);
             } else if (command.equalsIgnoreCase("updateCar")) {
@@ -37,18 +38,31 @@ public class Main {
                 connectMechanic(scanner);
             } else if (command.equalsIgnoreCase("selectCar")) {
                 selectCarBy(carDao, scanner);
+            } else if (command.equalsIgnoreCase("selectOwner")) {
+                selectOwnerBy(ownerDao, scanner);
             }
         } while (!command.equalsIgnoreCase("quit"));
 
     }
 
+    private static void selectOwnerBy(OwnerDao dao, Scanner scanner) {
+        System.out.println("Choose select by: [id/addCar]");
+        String command = scanner.nextLine();
+        if (command.equalsIgnoreCase("addCar")) {
+            dao.addCarToOwner(scanner);
+        } else {
+            System.out.println("Wrong command!");
+        }
+    }
+
     private static void selectCarBy(CarDao dao, Scanner scanner) {
         System.out.println("Choose select by: [id/mechanicsOfThisCar]");
         String command = scanner.nextLine();
-        if (command.equalsIgnoreCase("mechanicsOfThisCar")) {
+        if (command.equalsIgnoreCase("id")) {
+            dao.findCarById(scanner);
+        } else if (command.equalsIgnoreCase("mechanicsOfThisCar")) {
             dao.carListOfMechanics(scanner);
         }
-
     }
 
     private static void connectMechanic(Scanner scanner) {

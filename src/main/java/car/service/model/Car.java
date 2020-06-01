@@ -32,6 +32,7 @@ public class Car {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "engine_type")
     private EngineType engineType;
+//    private Long ownerID;
     @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<Mechanic> mechanicSet;
