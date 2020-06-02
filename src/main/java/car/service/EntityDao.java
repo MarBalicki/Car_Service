@@ -1,5 +1,6 @@
 package car.service;
 
+import car.service.model.Owner;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -62,6 +63,38 @@ public class EntityDao<T> {
             CriteriaQuery<T> criteriaQuery = cb.createQuery(classType);
             Root<T> root = criteriaQuery.from(classType);
             criteriaQuery.select(root);
+            list.addAll(session.createQuery(criteriaQuery).list());
+        } catch (HibernateException he) {
+            he.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<T> findByPhoneNumber(Class<T> classType, int phoneNumber) {
+        List<T> list = new ArrayList<>();
+        SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+            Root<T> root = criteriaQuery.from(classType);
+            criteriaQuery.select(root)
+                    .where(criteriaBuilder.equal(root.get("phoneNumber"), phoneNumber));
+            list.addAll(session.createQuery(criteriaQuery).list());
+        } catch (HibernateException he) {
+            he.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<T> findByLastName(Class<T> classType, String lastName) {
+        List<T> list = new ArrayList<>();
+        SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(classType);
+            Root<T> root = criteriaQuery.from(classType);
+            criteriaQuery.select(root)
+                    .where(criteriaBuilder.equal(root.get("lastName"), lastName));
             list.addAll(session.createQuery(criteriaQuery).list());
         } catch (HibernateException he) {
             he.printStackTrace();

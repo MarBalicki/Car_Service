@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class MechanicDao {
-    EntityDao<Mechanic> entityDao = new EntityDao<>();
+    EntityDao<Mechanic> mechanicEntityDao = new EntityDao<>();
 
     protected void addMechanic(Scanner scanner) {
         System.out.println("Give data separated by a space: [NAME/LAST_NAME/PHONE_NUMBER]");
@@ -20,7 +20,7 @@ public class MechanicDao {
                             + data[1].substring(1).toLowerCase())
                     .phoneNumber(Integer.parseInt(data[2]))
                     .build();
-            entityDao.saveOrUpdate(mechanic);
+            mechanicEntityDao.saveOrUpdate(mechanic);
         } catch (Exception e) {
             System.err.println("Wrong data! HAVE TO BE PHONE NUMBER!");
         }
@@ -30,7 +30,7 @@ public class MechanicDao {
         System.out.println("Which ID You want to change: ");
         try {
             Long id = Long.valueOf(scanner.nextLine());
-            Optional<Mechanic> optionalMechanic = entityDao.findById(Mechanic.class, id);
+            Optional<Mechanic> optionalMechanic = mechanicEntityDao.findById(Mechanic.class, id);
             if (optionalMechanic.isPresent()) {
                 System.out.println("Give data separated by a space: [NAME/LAST_NAME/STILL_WORK]");
                 String line = scanner.nextLine();
@@ -44,7 +44,7 @@ public class MechanicDao {
                         .stillWork(Boolean.parseBoolean(data[2]))
                         .id(id)
                         .build();
-                entityDao.saveOrUpdate(mechanic);
+                mechanicEntityDao.saveOrUpdate(mechanic);
             } else {
                 System.err.println("Mechanic with that ID not exist!");
             }
@@ -55,17 +55,17 @@ public class MechanicDao {
 
     protected void showAllMechanic() {
         System.out.println("List of all mechanics: ");
-        entityDao.showAll(Mechanic.class).forEach(System.out::println);
+        mechanicEntityDao.showAll(Mechanic.class).forEach(System.out::println);
     }
 
     protected void deleteMechanic(Scanner scanner) {
         System.out.println("Which ID You want to delete: ");
         try {
             Long id = Long.valueOf(scanner.nextLine());
-            Optional<Mechanic> optionalMechanic = entityDao.findById(Mechanic.class, id);
+            Optional<Mechanic> optionalMechanic = mechanicEntityDao.findById(Mechanic.class, id);
             if (optionalMechanic.isPresent()) {
                 Mechanic mechanic = optionalMechanic.get();
-                entityDao.delete(mechanic);
+                mechanicEntityDao.delete(mechanic);
             } else {
                 System.err.println("Mechanic with that ID not exist!");
             }
