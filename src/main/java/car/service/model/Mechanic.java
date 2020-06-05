@@ -28,7 +28,6 @@ public class Mechanic extends Person {
     private boolean stillWork = Boolean.TRUE;
     @ManyToMany(mappedBy = "mechanicSet", fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Set<Car> carSet;
 
 

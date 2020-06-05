@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Car {
 
     @Id
@@ -32,9 +33,14 @@ public class Car {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "engine_type")
     private EngineType engineType;
-//    private Long ownerID;
+    @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Owner owner;
     @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<Mechanic> mechanicSet;
+    @OneToMany(mappedBy = "car", fetch = FetchType.EAGER)
+    private Set<ServiceRequest> serviceRequestSet;
 
 }

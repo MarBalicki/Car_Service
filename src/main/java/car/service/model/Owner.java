@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -20,10 +19,5 @@ public class Owner extends Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_id")
-    @ToString.Exclude
-    private Set<Car> carSet;
 
 }

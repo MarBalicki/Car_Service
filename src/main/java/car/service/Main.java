@@ -1,8 +1,6 @@
 package car.service;
 
-import car.service.model.Car;
-import car.service.model.Mechanic;
-import car.service.model.Owner;
+import car.service.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,30 +11,45 @@ public class Main {
         CarDao carDao = new CarDao();
         MechanicDao mechanicDao = new MechanicDao();
         OwnerDao ownerDao = new OwnerDao();
+        ServiceRequestDao serviceRequestDao = new ServiceRequestDao();
         Scanner scanner = new Scanner(System.in);
         String command;
 
+//        Car car = Car.builder()
+//                .registrationNumber("dwr0851c")
+//                .brand(Brand.FORD)
+//                .model("mondeoiv")
+//                .bodyStyle(BodyStyle.COMBI)
+//                .productionYear(2014)
+//                .capacity(2.0)
+//                .engineType(EngineType.DIESEL)
+//                .build();
+//        Owner owner = Owner.builder()
+//                .name("marcin")
+//                .lastName("balicki")
+//                .phoneNumber(501433659)
+//                .build();
+//        new EntityDao<Car>().saveOrUpdate(car);
+//        new EntityDao<Owner>().saveOrUpdate(owner);
+//        ownerDao.addCarToOwner(1L, 1L);
+
         do {
-            System.out.println("Choose order: [addCar/addMechanic/updateCar/" +
-                    "updateMechanic/carList/mechanicList/deleteCar/deleteMechanic/" +
-                    "connectMechanic/findPhoneNumber/findLastName/selectCar/selectOwner/quit]");
+            System.out.println("Choose order: [addNewCar/addMechanic/addServiceRequest/" +
+                    "carList/mechanicList/serviceRequestsList/connectMechanic/\n" +
+                    "findPhoneNumber/findLastName/selectCar/selectOwner/quit]");
             command = scanner.nextLine();
-            if (command.equalsIgnoreCase("addCar")) {
+            if (command.equalsIgnoreCase("addNewCar")) {
                 carDao.addNewCar(scanner);
             } else if (command.equalsIgnoreCase("addMechanic")) {
                 mechanicDao.addMechanic(scanner);
-            } else if (command.equalsIgnoreCase("updateCar")) {
-                carDao.updateCar(scanner);
-            } else if (command.equalsIgnoreCase("updateMechanic")) {
-                mechanicDao.updateMechanic(scanner);
+            } else if (command.equalsIgnoreCase("addServiceRequest")) {
+                serviceRequestDao.addRequestToCar(scanner);
             } else if (command.equalsIgnoreCase("carList")) {
                 carDao.showAllCars();
             } else if (command.equalsIgnoreCase("mechanicList")) {
                 mechanicDao.showAllMechanic();
-            } else if (command.equalsIgnoreCase("deleteCar")) {
-                carDao.deleteCar(scanner);
-            } else if (command.equalsIgnoreCase("deleteMechanic")) {
-                mechanicDao.deleteMechanic(scanner);
+            } else if (command.equalsIgnoreCase("serviceRequestsList")) {
+                serviceRequestDao.showAllRequest();
             } else if (command.equalsIgnoreCase("connectMechanic")) {
                 connectMechanic(scanner);
             } else if (command.equalsIgnoreCase("findPhoneNumber")) {
@@ -47,34 +60,56 @@ public class Main {
                 selectCarBy(carDao, scanner);
             } else if (command.equalsIgnoreCase("selectOwner")) {
                 selectOwnerBy(ownerDao, scanner);
+            } else if (command.equalsIgnoreCase("selectMechanic")) {
+                selectMechanicBy(mechanicDao, scanner);
             }
         } while (!command.equalsIgnoreCase("quit"));
 
     }
 
     private static void selectCarBy(CarDao dao, Scanner scanner) {
-        System.out.println("Choose select by: [id/mechanicsOfThisCar]");
+        System.out.println("Choose select by: " +
+                "[id/findOwner/mechanicsOfThisCar/serviceRequests/closeServiceRequest" +
+                "/updateCar/deleteCar]");
         String command = scanner.nextLine();
         if (command.equalsIgnoreCase("id")) {
             dao.findCarById(scanner);
+        } else if (command.equalsIgnoreCase("findOwner")) {
+            dao.findOwner(scanner);
         } else if (command.equalsIgnoreCase("mechanicsOfThisCar")) {
             dao.carListOfMechanics(scanner);
+        } else if (command.equalsIgnoreCase("serviceRequests")) {
+            dao.serviceRequestsOfCar(scanner);
+        } else if (command.equalsIgnoreCase("closeServiceRequest")) {
+            new ServiceRequestDao().closeServiceRequest(scanner);
+        } else if (command.equalsIgnoreCase("updateCar")) {
+            dao.updateCar(scanner);
+        } else if (command.equalsIgnoreCase("deleteCar")) {
+            dao.deleteCar(scanner);
         } else {
             System.out.println("Wrong command!");
         }
     }
 
     private static void selectOwnerBy(OwnerDao dao, Scanner scanner) {
-        System.out.println("Choose find by: [id/addCar/carList]");
+        System.out.println("Choose select by: [id/addCar]");
         String command = scanner.nextLine();
         if (command.equalsIgnoreCase("id")) {
             dao.findOwnerById(scanner);
         } else if (command.equalsIgnoreCase("addCar")) {
             dao.addCarToOwner(scanner);
-        } else if (command.equalsIgnoreCase("carList")) {
-            dao.ownerCarList(scanner);
         } else {
             System.out.println("Wrong command!");
+        }
+    }
+
+    private static void selectMechanicBy(MechanicDao mechanicDao, Scanner scanner) {
+        System.out.println("Choose select by: [updateMechanic/deleteMechanic]");
+        String command = scanner.nextLine();
+        if (command.equalsIgnoreCase("updateMechanic")) {
+            mechanicDao.updateMechanic(scanner);
+        } else if (command.equalsIgnoreCase("deleteMechanic")) {
+            mechanicDao.deleteMechanic(scanner);
         }
     }
 
@@ -88,7 +123,7 @@ public class Main {
             ownerList.forEach(System.out::println);
             mechanicList.forEach(System.out::println);
         } catch (Exception e) {
-            System.out.println("Wrong data!");
+            System.err.println("Wrong data!");
         }
     }
 
@@ -101,7 +136,7 @@ public class Main {
             ownerList.forEach(System.out::println);
             mechanicList.forEach(System.out::println);
         } catch (Exception e) {
-            System.out.println("Wrong data!");
+            System.err.println("Wrong data!");
         }
     }
 

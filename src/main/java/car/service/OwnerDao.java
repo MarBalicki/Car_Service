@@ -6,13 +6,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.*;
 
 public class OwnerDao {
-    //    CarDao carDao = new CarDao();
     EntityDao<Owner> ownerEntityDao = new EntityDao<>();
     private final static String OWNER_NOT_EXIST = "Owner with that ID not exist!";
 
@@ -45,32 +41,14 @@ public class OwnerDao {
             Owner owner = ownerOptional.get();
             String[] data = new CarDao().dataLine(scanner);
             Car car = new CarDao().buildCar(data);
+            car.setOwner(owner);
             new EntityDao<Car>().saveOrUpdate(car);
-            owner.getCarSet().add(car);
-            new EntityDao<Owner>().saveOrUpdate(owner);
         } else {
             System.err.println(OWNER_NOT_EXIST);
         }
     }
 
-    protected void addCarToOwner(Long ownerID, Long carID) {
-        Optional<Owner> ownerOptional = ownerEntityDao.findById(Owner.class, ownerID);
-        if (ownerOptional.isPresent()) {
-            Owner owner = ownerOptional.get();
-            Optional<Car> carOptional = new EntityDao<Car>().findById(Car.class, carID);
-            if (carOptional.isPresent()) {
-                Car car = carOptional.get();
-                owner.getCarSet().add(car);
-                new EntityDao<Owner>().saveOrUpdate(owner);
-            } else {
-                System.err.println("Car with that ID not exist!");
-            }
-        } else {
-            System.err.println(OWNER_NOT_EXIST);
-        }
-    }
-
-    public void findOwnerById(Scanner scanner) {
+    protected void findOwnerById(Scanner scanner) {
         System.out.println("Owner ID: ");
         try {
             Long id = Long.parseLong(scanner.nextLine());
@@ -84,29 +62,6 @@ public class OwnerDao {
         } catch (Exception e) {
             System.err.println("Wrong data!");
         }
-    }
-
-    public void ownerCarList(Scanner scanner) {
-        System.out.println("Owner ID: ");
-        Long ownerID = Long.parseLong(scanner.nextLine());
-        Optional<Owner> ownerOptional = ownerEntityDao.findById(Owner.class, ownerID);
-        if (ownerOptional.isPresent()) {
-            findOwnerCars(ownerID).forEach(System.out::println);
-        } else {
-            System.err.println(OWNER_NOT_EXIST);
-        }
-    }
-
-    private Set<Car> findOwnerCars(Long ownerID) {
-        Set<Car> carSet = new HashSet<>();
-        SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
-            Owner owner = session.get(Owner.class, ownerID);
-            carSet.addAll(owner.getCarSet());
-        } catch (HibernateException he) {
-            he.printStackTrace();
-        }
-        return carSet;
     }
 
 

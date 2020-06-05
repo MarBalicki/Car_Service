@@ -1,14 +1,9 @@
 package car.service;
 
 import car.service.model.*;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.Set;
 
 public class CarDao {
     EntityDao<Car> carEntityDao = new EntityDao<>();
@@ -17,23 +12,15 @@ public class CarDao {
 
     protected void addNewCar(Scanner scanner) {
         String[] data = dataLine(scanner);
-        Car car = null;
-        Owner owner = null;
+        Car car;
+        Owner owner;
         try {
             car = buildCar(data);
-            carEntityDao.saveOrUpdate(car);
             owner = ownerDao.buildOwner(scanner);
             ownerEntityDao.saveOrUpdate(owner);
-            Long carID = car.getId();
-            Long ownerID = owner.getId();
-            ownerDao.addCarToOwner(ownerID, carID);
+            car.setOwner(owner);
+            carEntityDao.saveOrUpdate(car);
         } catch (Exception e) {
-            if (car != null) {
-                carEntityDao.delete(car);
-            }
-            if (owner != null) {
-                ownerEntityDao.delete(owner);
-            }
             System.err.println("Wrong data!");
         }
     }
@@ -68,7 +55,6 @@ public class CarDao {
                         .id(id)
                         .build();
                 carEntityDao.saveOrUpdate(car);
-
             } else {
                 System.err.println("Car with that ID not exist!");
             }
@@ -85,20 +71,8 @@ public class CarDao {
     }
 
     protected void deleteCar(Scanner scanner) {
-        System.out.println("Which id You want to delete: ");
-        try {
-            Long id = Long.parseLong(scanner.nextLine());
-            Optional<Car> carOptional = carEntityDao.findById(Car.class, id);
-            if (carOptional.isPresent()) {
-                Car car = carOptional.get();
-                carEntityDao.delete(car);
-            } else {
-                System.err.println("Car with that ID not exist!");
-            }
-        } catch (Exception e) {
-            System.err.println("Wrong data!");
-
-        }
+        Car car = getCar(scanner);
+        carEntityDao.delete(car);
     }
 
     protected void showAllCars() {
@@ -107,46 +81,46 @@ public class CarDao {
     }
 
     protected void carListOfMechanics(Scanner scanner) {
+        Car car = getCar(scanner);
+        if (car != null) {
+            car.getMechanicSet().forEach(System.out::println);
+        }
+    }
+
+    protected void findCarById(Scanner scanner) {
+        Car car = getCar(scanner);
+        System.out.println(car);
+    }
+
+    protected void findOwner(Scanner scanner) {
+        Car car = getCar(scanner);
+        Owner owner = null;
+        if (car != null) {
+            owner = car.getOwner();
+        }
+        System.out.println(owner);
+    }
+
+    protected void serviceRequestsOfCar(Scanner scanner) {
+        Car car = getCar(scanner);
+        if (car != null) {
+            car.getServiceRequestSet().forEach(System.out::println);
+        }
+    }
+
+    private Car getCar(Scanner scanner) {
         System.out.println("Write car ID: ");
         try {
             Long carID = Long.parseLong(scanner.nextLine());
             Optional<Car> carOptional = carEntityDao.findById(Car.class, carID);
             if (carOptional.isPresent()) {
-                findMechanics(carID).forEach(System.out::println);
+                return carOptional.get();
             } else {
                 System.err.println("Car with that ID not exist!");
             }
         } catch (Exception e) {
             System.err.println("Wrong data!");
         }
+        return null;
     }
-
-    private Set<Mechanic> findMechanics(Long id) {
-        Set<Mechanic> mechanicSet = new HashSet<>();
-        SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
-            Car car = session.get(Car.class, id);
-            mechanicSet.addAll(car.getMechanicSet());
-        } catch (HibernateException he) {
-            he.printStackTrace();
-        }
-        return mechanicSet;
-    }
-
-    public void findCarById(Scanner scanner) {
-        System.out.println("What ID You are looking for: ");
-        try {
-            Long id = Long.parseLong(scanner.nextLine());
-            Optional<Car> carOptional = new EntityDao<Car>().findById(Car.class, id);
-            if (carOptional.isPresent()) {
-                Car car = carOptional.get();
-                System.out.println(car);
-            } else {
-                System.err.println("Car with that ID not exist!");
-            }
-        } catch (Exception e) {
-            System.err.println("Wrong data!");
-        }
-    }
-
 }
