@@ -70,7 +70,7 @@ public class Main {
     private static void selectCarBy(CarDao dao, Scanner scanner) {
         System.out.println("Choose select by: " +
                 "[id/findOwner/mechanicsOfThisCar/serviceRequests/closeServiceRequest" +
-                "/updateCar/deleteCar]");
+                "/notFinishedServiceRequest/updateCar/deleteCar]");
         String command = scanner.nextLine();
         if (command.equalsIgnoreCase("id")) {
             dao.findCarById(scanner);
@@ -82,6 +82,8 @@ public class Main {
             dao.serviceRequestsOfCar(scanner);
         } else if (command.equalsIgnoreCase("closeServiceRequest")) {
             new ServiceRequestDao().closeServiceRequest(scanner);
+        } else if (command.equalsIgnoreCase("notFinishedServiceRequest")) {
+            new ServiceRequestDao().notFinishedServiceRequest(scanner);
         } else if (command.equalsIgnoreCase("updateCar")) {
             dao.updateCar(scanner);
         } else if (command.equalsIgnoreCase("deleteCar")) {

@@ -2,8 +2,10 @@ package car.service;
 
 import car.service.model.*;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 
 public class CarDao {
     EntityDao<Car> carEntityDao = new EntityDao<>();
@@ -101,11 +103,23 @@ public class CarDao {
         System.out.println(owner);
     }
 
+    protected void closeServiceRequest(Scanner scanner) {
+        //todo not good
+        Car car = getCar(scanner);
+        Set<ServiceRequest> requestSet = Objects.requireNonNull(car).getServiceRequestSet();
+        for (ServiceRequest request : requestSet) {
+            System.out.println(request);
+            if (request.getId().equals(car.getId())) {
+                new ServiceRequestDao().closeServiceRequest(scanner);
+            } else {
+                System.err.println("That car ID don`t have that service request ID!");
+            }
+        }
+    }
+
     protected void serviceRequestsOfCar(Scanner scanner) {
         Car car = getCar(scanner);
-        if (car != null) {
-            car.getServiceRequestSet().forEach(System.out::println);
-        }
+        Objects.requireNonNull(car).getServiceRequestSet().forEach(System.out::println);
     }
 
     private Car getCar(Scanner scanner) {
