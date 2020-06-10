@@ -35,8 +35,8 @@ public class Main {
 
         do {
             System.out.println("Choose order: [addNewCar/addMechanic/addServiceRequest/" +
-                    "carList/mechanicList/serviceRequestsList/connectMechanic/\n" +
-                    "findPhoneNumber/findLastName/selectCar/selectOwner/quit]");
+                    "carList/mechanicList/serviceRequestsList/connectMechanic/findPhoneNumber/" +
+                    "findLastName/\nselectCar/selectOwner/selectRequest/quit]");
             command = scanner.nextLine();
             if (command.equalsIgnoreCase("addNewCar")) {
                 carDao.addNewCar(scanner);
@@ -62,6 +62,8 @@ public class Main {
                 selectOwnerBy(ownerDao, scanner);
             } else if (command.equalsIgnoreCase("selectMechanic")) {
                 selectMechanicBy(mechanicDao, scanner);
+            } else if (command.equalsIgnoreCase("selectRequest")) {
+                selectRequestBy(serviceRequestDao, scanner);
             }
         } while (!command.equalsIgnoreCase("quit"));
 
@@ -80,10 +82,6 @@ public class Main {
             dao.carListOfMechanics(scanner);
         } else if (command.equalsIgnoreCase("serviceRequests")) {
             dao.serviceRequestsOfCar(scanner);
-        } else if (command.equalsIgnoreCase("closeServiceRequest")) {
-            new ServiceRequestDao().closeServiceRequest(scanner);
-        } else if (command.equalsIgnoreCase("notFinishedServiceRequest")) {
-            new ServiceRequestDao().notFinishedServiceRequest(scanner);
         } else if (command.equalsIgnoreCase("updateCar")) {
             dao.updateCar(scanner);
         } else if (command.equalsIgnoreCase("deleteCar")) {
@@ -112,6 +110,25 @@ public class Main {
             mechanicDao.updateMechanic(scanner);
         } else if (command.equalsIgnoreCase("deleteMechanic")) {
             mechanicDao.deleteMechanic(scanner);
+        }
+    }
+
+    private static void selectRequestBy(ServiceRequestDao serviceRequestDao, Scanner scanner) {
+        System.out.println("Choose select by: " +
+                "[howManyOpen/howManyClosed/stillOpenRequests/requestsTotalAmount/closeServiceRequest]");
+        String command = scanner.nextLine();
+        if (command.equalsIgnoreCase("howManyClosed")) {
+            serviceRequestDao.closedServiceRequests();
+        } else if (command.equalsIgnoreCase("howManyOpen")) {
+            serviceRequestDao.openServiceRequests();
+        } else if (command.equalsIgnoreCase("stillOpenRequests")) {
+            serviceRequestDao.stillOpenServiceRequests().forEach(System.out::println);
+        } else if (command.equalsIgnoreCase("requestsTotalAmount")) {
+            serviceRequestDao.requestsTotalAmount();
+        } else if (command.equalsIgnoreCase("closeServiceRequest")) {
+            serviceRequestDao.closeServiceRequest(scanner);
+        } else {
+            System.out.println("Wrong command!");
         }
     }
 

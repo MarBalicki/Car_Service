@@ -55,7 +55,7 @@ public class MechanicDao {
 
     protected void showAllMechanic() {
         System.out.println("List of all mechanics: ");
-        mechanicEntityDao.showAll(Mechanic.class).forEach(System.out::println);
+        mechanicEntityDao.getAll(Mechanic.class).forEach(System.out::println);
     }
 
     protected void deleteMechanic(Scanner scanner) {

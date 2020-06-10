@@ -1,8 +1,6 @@
 package car.service.model;
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -42,5 +40,6 @@ public class Car {
     private Set<Mechanic> mechanicSet;
     @OneToMany(mappedBy = "car", fetch = FetchType.EAGER)
     private Set<ServiceRequest> serviceRequestSet;
+
 
 }

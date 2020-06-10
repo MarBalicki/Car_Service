@@ -5,7 +5,6 @@ import car.service.model.*;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.Set;
 
 public class CarDao {
     EntityDao<Car> carEntityDao = new EntityDao<>();
@@ -79,7 +78,7 @@ public class CarDao {
 
     protected void showAllCars() {
         System.out.println("List of all cars: ");
-        carEntityDao.showAll(Car.class).forEach(System.out::println);
+        carEntityDao.getAll(Car.class).forEach(System.out::println);
     }
 
     protected void carListOfMechanics(Scanner scanner) {
@@ -103,19 +102,23 @@ public class CarDao {
         System.out.println(owner);
     }
 
-    protected void closeServiceRequest(Scanner scanner) {
-        //todo not good
-        Car car = getCar(scanner);
-        Set<ServiceRequest> requestSet = Objects.requireNonNull(car).getServiceRequestSet();
-        for (ServiceRequest request : requestSet) {
-            System.out.println(request);
-            if (request.getId().equals(car.getId())) {
-                new ServiceRequestDao().closeServiceRequest(scanner);
-            } else {
-                System.err.println("That car ID don`t have that service request ID!");
-            }
-        }
-    }
+//    protected void closeServiceRequest(Scanner scanner) {
+//        //todo not good
+//        Car car = getCar(scanner);
+//        Set<ServiceRequest> requestSet = Objects.requireNonNull(car).getServiceRequestSet();
+//        boolean isInSet = false;
+//        for (ServiceRequest request : requestSet) {
+//            System.out.println(request);
+//            if (request.getCar().getId().equals(car.getId())) {
+//                isInSet = true;
+//            }
+//            if (isInSet) {
+//                new ServiceRequestDao().closeServiceRequest(scanner);
+//            } else {
+//                System.err.println("That car ID don`t have that service request ID!");
+//            }
+//        }
+//    }
 
     protected void serviceRequestsOfCar(Scanner scanner) {
         Car car = getCar(scanner);

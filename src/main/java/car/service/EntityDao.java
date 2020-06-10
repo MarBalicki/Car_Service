@@ -55,7 +55,7 @@ public class EntityDao<T> {
         }
     }
 
-    public List<T> showAll(Class<T> classType) {
+    public List<T> getAll(Class<T> classType) {
         List<T> list = new ArrayList<>();
         SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
         try (Session session = sessionFactory.openSession()) {
@@ -101,4 +101,5 @@ public class EntityDao<T> {
         }
         return list;
     }
+
 }

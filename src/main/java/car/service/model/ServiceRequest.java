@@ -2,7 +2,7 @@ package car.service.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,12 +24,23 @@ public class ServiceRequest {
     @CreationTimestamp
     @Column(name = "created_request_date")
     private LocalDateTime createdRequestDate;
-//    @UpdateTimestamp
     @Column(name = "repair_date")
     private LocalDateTime repairDate;
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Car car;
+    @Formula(value = "(select sum(cs.amount) from car_service.service_requests cs)")
+    @ToString.Exclude
+    private Double totalAmount;
+    @Formula(value = "(select count(cs.repair_date) from car_service.service_requests cs " +
+            "where cs.repair_date is not null)")
+    @ToString.Exclude
+    private int openServiceRequests;
+    @Formula(value = "(select count(cs.repair_date) from car_service.service_requests cs " +
+            "where cs.repair_date is not null)")
+    @ToString.Exclude
+    private int closedServiceRequests;
+
 
 }

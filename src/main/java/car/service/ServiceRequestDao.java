@@ -6,11 +6,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 public class ServiceRequestDao {
     EntityDao<ServiceRequest> serviceRequestEntityDao = new EntityDao<>();
@@ -41,7 +39,7 @@ public class ServiceRequestDao {
 
     protected void showAllRequest() {
         System.out.println("List of all service requests: ");
-        serviceRequestEntityDao.showAll(ServiceRequest.class).forEach(System.out::println);
+        serviceRequestEntityDao.getAll(ServiceRequest.class).forEach(System.out::println);
     }
 
     protected void closeServiceRequest(Scanner scanner) {
@@ -70,19 +68,38 @@ public class ServiceRequestDao {
         }
     }
 
-    protected List<ServiceRequest> notFinishedServiceRequest(Scanner scanner) {
-        List<ServiceRequest> list = new ArrayList<>();
+    protected List<ServiceRequest> stillOpenServiceRequests() {
+        List<ServiceRequest> notFinishedList = new ArrayList<>();
+        List<ServiceRequest> list = serviceRequestEntityDao.getAll(ServiceRequest.class);
+        for (ServiceRequest request : list) {
+//            int openServiceRequests = request.getOpenServiceRequests();
+            if (request.getRepairDate() == null) {
+                notFinishedList.add(request);
+            }
+        }
+        return notFinishedList;
+    }
+
+    protected void closedServiceRequests() {
+        int closedRequests = serviceRequestEntityDao.getAll(ServiceRequest.class).size()
+                - stillOpenServiceRequests().size();
+        System.out.printf("We have %d open service requests.\n", closedRequests);
+    }
+
+    protected void openServiceRequests() {
+        System.out.printf("We have %d open service requests.\n", stillOpenServiceRequests().size());
+    }
+
+    protected void requestsTotalAmount() {
         SessionFactory sessionFactory = HibernateUtil.getOurSessionFactory();
         try (Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<ServiceRequest> criteriaQuery = criteriaBuilder.createQuery(ServiceRequest.class);
-            Root<ServiceRequest> requestRoot = criteriaQuery.from(ServiceRequest.class);
-            criteriaQuery.select(requestRoot)
-                    .where(criteriaBuilder.equal(requestRoot.get("repairDate"), null));
-            list.addAll(session.createQuery(criteriaQuery).list());
+            Set<ServiceRequest> set = session.createQuery()
+            ServiceRequest request = session.get(ServiceRequest.class, 1L);
+            System.out.println("Total amount of all service requests is: "
+                    + request.getTotalAmount());
         } catch (HibernateException he) {
             he.printStackTrace();
         }
-        return list;
+
     }
 }
